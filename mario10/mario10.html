@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+</head>
+<body>
+<!doctype html>
+<html lang="en"> 
+<head> 
+    
+<meta charset="UTF-8" />
+<title>
+Master Desarrollo videojuegos UCM
+</title>
+    <script type="text/javascript" src="js/phaser.js"></script>
+    <script type="text/javascript" src="js/goomba.js"></script>
+    <script type="text/javascript" src="js/coins.js"></script>
+    <script type="text/javascript" src="js/text.js"></script>
+    <script type="text/javascript" src="js/mario.js"></script>
+
+
+</head>
+<body>
+
+<script type="text/javascript">
+
+var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+
+
+function preload() {
+
+    game.load.image('fondo', 'assets/images/backgrounds/bg.gif');
+    game.load.image('suelo', 'assets/images/backgrounds/suelo.gif');
+    game.load.image('plataforma', 'assets/images/backgrounds/plataforma.gif');
+
+    game.load.audio('snd_game', ['assets/music/music_main.mp3', 'assets/music/music_main.ogg']);
+    game.load.audio('snd_die', ['assets/music/music_die.mp3', 'assets/music/music_die.ogg']);
+
+    this.mario = new Mario();
+    this.hud = new Text(game);
+    this.goomba = new Goomba();
+    this.coins = new Coins(this.hud);
+}
+
+
+function create() {
+
+    
+    //Creamos el sprite de fondo
+    game.add.sprite(0, 0, 'fondo');
+
+    //Inicializar la física
+    game.physics.startSystem(Phaser.Physics.ARCADE);
+
+    //Creamos el grupo de objetos que conforman la plataforma
+    this.plataformas = game.add.group();
+
+    //Los elementos del grupo plataformas tienen física
+    this.plataformas.enableBody = true;
+
+    // Here we create the ground.
+    var suelo = this.plataformas.create(0, game.world.height - 32, 'suelo');
+
+
+    //  This stops it from falling away when you jump on it
+    suelo.body.immovable = true;
+
+    //  Now let's create two ledges
+    var plataforma = this.plataformas.create(400, 400, 'plataforma');
+    plataforma.body.immovable = true;
+
+    plataforma = this.plataformas.create(150, 250, 'plataforma');
+    plataforma.body.immovable = true;
+
+
+    // Cargamos los sonidos del juego 
+    snd_main = game.add.audio('snd_game',1,true);
+    snd_die = game.add.audio('snd_die');
+    snd_main.play()
+
+    // Creamos a mario
+    this.mario.create();
+    // Creamos las monedas
+    this.coins.create();
+    // Creamos el hud
+    this.hud.create();
+    // Creamos a goomba
+    this.goomba.create();
+
+
+}
+
+function update() {
+    this.coins.update(this.plataformas,this.mario);
+    this.hud.update();
+    this.goomba.update(this.plataformas,this.mario);
+    this.mario.update(this.plataformas);
+}
+
+
+
+
+</script>
+
+</body>
+</html>
+</body>
+</html>
